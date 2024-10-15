@@ -1,11 +1,8 @@
 <?php
 
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-
-//add manually controller
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\DiscussController;
-
+// use App\Livewire\Chat\Index;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,18 +15,20 @@ use App\Http\Controllers\DiscussController;
 |
 */
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
+Route::get('/', function () {
+    return view('welcome');
+});
 
-Route::get('/', [HomeController::class, 'welcome'])->name('home');
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('/discussions', [DiscussController::class, 'index'])->name('index');
-Route::get('/discussions/{id}/show', [DiscussController::class, 'show'])->name('show');
-Route::post('/discussions/{id}', [DiscussController::class, 'store'])->name('store');
-Route::post('/discussions/{id}/edit', [DiscussController::class, 'edit'])->name('edit');
-Route::put('/discussions/{id}/update', [DiscussController::class, 'update'])->name('update');
-Route::delete('/discussions', [DiscussController::class, 'destroy'])->name('destroy');
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
 
+require __DIR__.'/auth.php';
 
-
+// Route::get('/chat', Index::class)->name('chat.index');
