@@ -10,7 +10,7 @@ RUN npm run build
 FROM php:8.2-apache
 WORKDIR /var/www/html
 
-# Install required system dependencies for Laravel
+# 1. Add libzip-dev to the system dependencies list
 RUN apt-get update && apt-get install -y \
     git \
     curl \
@@ -21,36 +21,35 @@ RUN apt-get update && apt-get install -y \
     unzip \
     sqlite3 \
     libsqlite3-dev \
+    **libzip-dev** \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Install essential PHP extensions
-RUN docker-php-ext-install pdo_mysql pdo_sqlite mbstring exif pcntl bcmath gd
+# 2. Add 'zip' to the PHP extensions list
+RUN docker-php-ext-install pdo_mysql pdo_sqlite mbstring exif pcntl bcmath gd **zip**
 
-# Copy external Composer binary to this container
+# Copy Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Enable Apache mod_rewrite for Laravel routing
+# Enable Apache mod_rewrite
 RUN a2enmod rewrite
 
-# Update Apache's DocumentRoot to Laravel's public folder
+# Update Apache's DocumentRoot
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
 RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
-# Copy all application files
+# 3. Copy files BEFORE composer install
 COPY . /var/www/html
-
-# Copy the built frontend assets from the node_builder stage
 COPY --from=node_builder /app/public/build /var/www/html/public/build
 
-# Install PHP dependencies
+# 4. Set permissions BEFORE composer install (sometimes fixes folder creation errors)
+RUN chown -R www-data:www-data /var/www/html
+
+# 5. Run Composer as the root user (default) to ensure it can write to vendor
 RUN composer install --optimize-autoloader --no-interaction --no-dev
 
-# Ensure proper permissions are granted to the webserver for Laravel's cache/storage
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database
+# Final permissions check
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Expose standard web traffic port
 EXPOSE 80
-
-# The default command that starts the apache server
 CMD ["apache2-foreground"]
