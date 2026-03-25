@@ -20,7 +20,7 @@
                 @forelse($events as $event)
                     <div class="bg-white overflow-hidden shadow-sm flex flex-col sm:rounded-lg">
                         @if($event->image_path)
-                            <img src="{{ Storage::url($event->image_path) }}" alt="{{ $event->title }}" class="w-full h-48 object-cover">
+                            <img src="{{ asset('storage/' . $event->image_path) }}" alt="{{ $event->title }}" class="w-full h-48 object-cover">
                         @else
                             <div class="w-full h-48 bg-gray-200 flex items-center justify-center text-gray-500">No Image</div>
                         @endif

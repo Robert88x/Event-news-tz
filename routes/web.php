@@ -33,6 +33,7 @@ Route::middleware('auth')->group(function () {
 
 require __DIR__.'/auth.php';
 
+// The events resource covers all routes including /events/create for admin to post an event.
 Route::resource('events', EventController::class);
 Route::post('events/{event}/comments', [App\Http\Controllers\CommentController::class, 'store'])->name('events.comments.store');
 Route::delete('comments/{comment}', [App\Http\Controllers\CommentController::class, 'destroy'])->name('comments.destroy');
