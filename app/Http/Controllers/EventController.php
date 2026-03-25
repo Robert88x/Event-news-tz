@@ -35,11 +35,17 @@ class EventController extends Controller
             'start_time' => 'required|date',
             'end_time' => 'nullable|date|after_or_equal:start_time',
             'image_path' => 'nullable|image|max:2048',
+            'video_path' => 'nullable|mimes:mp4,mov,ogg,qt|max:40000',
         ]);
 
         if ($request->hasFile('image_path')) {
             $path = $request->file('image_path')->store('events', 'public');
             $validated['image_path'] = $path;
+        }
+
+        if ($request->hasFile('video_path')) {
+            $videoPath = $request->file('video_path')->store('events/videos', 'public');
+            $validated['video_path'] = $videoPath;
         }
 
         auth()->user()->events()->create($validated);
@@ -73,11 +79,17 @@ class EventController extends Controller
             'start_time' => 'required|date',
             'end_time' => 'nullable|date|after_or_equal:start_time',
             'image_path' => 'nullable|image|max:2048',
+            'video_path' => 'nullable|mimes:mp4,mov,ogg,qt|max:40000',
         ]);
 
         if ($request->hasFile('image_path')) {
             $path = $request->file('image_path')->store('events', 'public');
             $validated['image_path'] = $path;
+        }
+
+        if ($request->hasFile('video_path')) {
+            $videoPath = $request->file('video_path')->store('events/videos', 'public');
+            $validated['video_path'] = $videoPath;
         }
 
         $event->update($validated);

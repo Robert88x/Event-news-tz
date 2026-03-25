@@ -16,6 +16,7 @@ class Event extends Model
         'start_time',
         'end_time',
         'image_path',
+        'video_path',
         'user_id',
     ];
 

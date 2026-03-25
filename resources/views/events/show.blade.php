@@ -8,8 +8,14 @@
     <div class="py-12">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm flex flex-col sm:rounded-lg">
+                @if($event->video_path)
+                    <video controls class="w-full bg-black max-h-[500px] object-contain border-b border-gray-200">
+                        <source src="{{ asset('storage/' . $event->video_path) }}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                @endif
                 @if($event->image_path)
-                    <img src="{{ asset('storage/' . $event->image_path) }}" alt="{{ $event->title }}" class="w-full max-h-96 object-cover aspect-video">
+                    <img src="{{ asset('storage/' . $event->image_path) }}" alt="{{ $event->title }}" class="w-full max-h-[500px] object-cover">
                 @endif
                 <div class="p-8 text-gray-900">
                     <div class="flex justify-between items-start mb-6 border-b pb-4">
