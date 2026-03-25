@@ -46,7 +46,7 @@ COPY --from=node_builder /app/public/build /var/www/html/public/build
 RUN chown -R www-data:www-data /var/www/html
 
 # 5. Run Composer as the root user (default) to ensure it can write to vendor
-RUN composer install --optimize-autoloader --no-interaction --no-dev
+RUN composer install --optimize-autoloader --no-interaction --no-dev --ignore-platform-reqs
 
 # Final permissions check
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
